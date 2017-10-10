@@ -37,8 +37,8 @@ defmodule AWSMetadata do
     setup_update_callback(expiration_time)
     {:ok, client}
   rescue
-    _ -> 
-      Logger.info(":ex_aws_metadata ignoring exception fetching client")
+    e -> 
+      Logger.info(":ex_aws_metadata ignoring exception fetching client: #{inspect(e)}")
       setup_retry_callback()
       {:ok, nil}
   end
