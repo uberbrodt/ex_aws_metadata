@@ -5,7 +5,7 @@ defmodule AWSMetadata.Client do
   
   def fetch do
     role = fetch_role()
-    %{"AccessKeyID": access_key, "SecretAccessKey": secret_key, "Expiration": expiration, "Token": token} = fetch_metadata(role)
+    %{"AccessKeyId": access_key, "SecretAccessKey": secret_key, "Expiration": expiration, "Token": token} = fetch_metadata(role)
     region = fetch_document()
     client_map = %{
       access_key_id: access_key,
