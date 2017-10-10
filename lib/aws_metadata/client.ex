@@ -5,17 +5,17 @@ defmodule AWSMetadata.Client do
   
   def fetch do
     role = fetch_role()
-    %{"AccessKeyId": access_key, "SecretAccessKey": secret_key, "Expiration": expiration, "Token": token} = fetch_metadata(role)
+    metadata = fetch_metadata(role)
     region = fetch_document()
     client_map = %{
-      access_key_id: access_key,
-      secret_access_key: secret_key,
+      access_key_id: metadata[:access_key_id],
+      secret_access_key: metadata[:secret_access_key],
       region: region,
-      token: token,
+      token: metadata[:token],
       endpoint: "amazonaws.com"
     }
     client = struct(AWS.Client, client_map)
-    {:ok, exp_datetime, 0} = DateTime.from_iso8601(expiration)
+    {:ok, exp_datetime, 0} = DateTime.from_iso8601(metadata[:expiration])
     {:ok, client, exp_datetime}
   end
 
@@ -26,7 +26,12 @@ defmodule AWSMetadata.Client do
 
   defp fetch_metadata(role) do
     %HTTPoison.Response{status_code: 200, body: body} = HTTPoison.get!("#{@credential_url}#{role}")
-    Poison.decode!(body)
+    result = Poison.decode!(body)
+    %{access_key_id: result["AccessKeyId"],
+      secret_access_key: result["SecretAccessKey"],
+      token: result["Token"],
+      expiration: result["Expiration"]
+    }
   end
 
   defp fetch_document do
