@@ -1,17 +1,21 @@
 defmodule AWSMetadata do
+  @moduledoc """
+  Documentation for AWSMetadata.
+  """
+  use GenServer
   require Logger 
+
   defstruct [:client]
 
   @alert_before_expiry -5
   @retry_delay 5_000
 
-  @moduledoc """
-  Documentation for AWSMetadata.
-  """
-  use GenServer
-
   def get_client do
     GenServer.call(__MODULE__, :get_client)
+  end
+
+  def start_link(_) do
+    GenServer.start_link(__MODULE__, [], name: __MODULE__)
   end
 
   def init(_) do
@@ -19,8 +23,13 @@ defmodule AWSMetadata do
     {:ok, %AWSMetadata{client: client}}
   end
 
-  def handle_call(:get_client, %{client: client} = state) do
+  def handle_call(:get_client, _from, %{client: client} = state) do
     {:reply, client, state}
+  end
+
+  def handle_info(:refresh_client, state) do
+    {:ok, client} = fetch_client()
+    {:noreply, %{state | client: client}}
   end
 
   defp fetch_client do
@@ -35,7 +44,7 @@ defmodule AWSMetadata do
   end
 
   defp setup_update_callback(expiration_time) do
-    exp_time = DateTime.diff(expiration_time, minutes: -5)
+    exp_time = DateTime.diff(expiration_time, minutes: @alert_before_expiry)
     refresh_ms = DateTime.to_unix(exp_time, :millisecond) - System.system_time(:millisecond)
     Process.send_after(__MODULE__, :refresh_client, refresh_ms)
   end
