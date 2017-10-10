@@ -47,7 +47,7 @@ defmodule AWSMetadata do
 
   defp setup_update_callback(expiration_time) do
     exp_time = Timex.shift(expiration_time, minutes: @alert_before_expiry)
-    refresh_ms = DateTime.to_unix(exp_time, :millisecond) - System.system_time(:millisecond)
+    refresh_ms = Timex.diff(exp_time, DateTime.utc_now, :milliseconds)
     Process.send_after(__MODULE__, :refresh_client, refresh_ms)
   end
 

@@ -9,7 +9,6 @@ defmodule AWSMetadata.Mixfile do
       start_permanent: Mix.env == :prod,
       aliases: aliases(),
       deps: deps(),
-
     ]
   end
 
@@ -33,7 +32,6 @@ defmodule AWSMetadata.Mixfile do
       {:timex, "~> 3.1.24"},
       {:httpoison, "~> 0.13"},
       {:poison, "~> 3.1"},
-      {:aws, github: "uberbrodt/aws-elixir", branch: "metadata_client"},
     ]
   end
 end

@@ -7,14 +7,13 @@ defmodule AWSMetadata.Client do
     role = fetch_role()
     metadata = fetch_metadata(role)
     region = fetch_document()
-    client_map = %{
+    client = %{
       access_key_id: metadata[:access_key_id],
       secret_access_key: metadata[:secret_access_key],
       region: region,
       token: metadata[:token],
       endpoint: "amazonaws.com"
     }
-    client = struct(AWS.Client, client_map)
     {:ok, exp_datetime, 0} = DateTime.from_iso8601(metadata[:expiration])
     {:ok, client, exp_datetime}
   end

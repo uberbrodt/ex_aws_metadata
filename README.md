@@ -1,6 +1,23 @@
 # AWSMetadata
 
-**TODO: Add description**
+An Elixir app to query authorization credentials via EC2 metadata. This is 
+a built-in feature for at least some of Amazon's official SDKs. Intended to be
+used in conjunction with any AWS library.
+
+## Usage
+
+```elixir
+client = AWSMetadata.get_client()
+iex(1)> client = AWSMetadata.get_client()
+%{
+    access_key_id: "ACCESS_KEY_ID",
+    endpoint: "amazonaws.com",
+    region: "us-east-1",
+    secret_access_key: "SECRET_ACCESS_KEY",
+    token: "TOKEN"
+}
+
+```
 
 ## Installation
 
