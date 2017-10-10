@@ -20,7 +20,7 @@ defmodule AWSMetadata.Client do
   end
 
   defp fetch_role do
-    %HTTPoison.Response{status_code: 200, body: body} = HTTPoison.get(@credential_url)
+    %HTTPoison.Response{status_code: 200, body: body} = HTTPoison.get!(@credential_url)
     body
   end
 
