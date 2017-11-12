@@ -30,7 +30,7 @@ defmodule AWSMetadata.Mixfile do
 
   defp package do
     [
-      maintainers: ["Chris Brodt chris@uberbrodt.net"],
+      maintainers: ["Chris Brodt"],
       licenses: ["Apache 2.0"],
       links: %{"Github" => "https://github.com/uberbrodt/ex_aws_metadata"}
     ]
@@ -39,9 +39,10 @@ defmodule AWSMetadata.Mixfile do
   # Run "mix help deps" to learn about dependencies.
   defp deps do
     [
-      {:timex, "~> 3.1.24"},
+      {:timex, "~> 3.1"},
       {:httpoison, "~> 0.13"},
       {:poison, "~> 3.1"},
+      {:credo, "~> 0.8", only: [:dev, :test], runtime: false},
     ]
   end
 end

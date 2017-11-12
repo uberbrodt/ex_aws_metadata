@@ -1,9 +1,10 @@
 defmodule AWSMetadata do
   @moduledoc """
-  Documentation for AWSMetadata.
+  Public API. Coordinates fetching and caching credentials, as well as refreshing
+  the credentials based upon the expiration time passed along.
   """
   use GenServer
-  require Logger 
+  require Logger
 
   defstruct [:client, :metadata_client]
 
@@ -19,7 +20,9 @@ defmodule AWSMetadata do
   end
 
   def init(args) do
-    state = %AWSMetadata{metadata_client: Keyword.get(args, :metadata_client, AWSMetadata.Client)}
+    state = %AWSMetadata{
+      metadata_client: Keyword.get(args, :metadata_client, AWSMetadata.Client)
+    }
     {:ok, client} = fetch_client(state.metadata_client)
     {:ok, %{state | client: client}}
   end
@@ -38,7 +41,7 @@ defmodule AWSMetadata do
     setup_update_callback(expiration_time)
     {:ok, client}
   rescue
-    e -> 
+    e ->
       Logger.info(":ex_aws_metadata ignoring exception fetching client: #{inspect(e)}")
       Logger.info(inspect(System.stacktrace, pretty: true))
       setup_retry_callback()

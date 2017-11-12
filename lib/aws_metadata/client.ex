@@ -1,8 +1,11 @@
 defmodule AWSMetadata.Client do
-  
+  @moduledoc """
+  Calls out to metadata service endpoints to collect IAM role info.
+  """
+
   @credential_url "http://169.254.169.254/latest/meta-data/iam/security-credentials/"
   @document_url "http://169.254.169.254/latest/dynamic/instance-identity/document"
-  
+
   def fetch do
     role = fetch_role()
     metadata = fetch_metadata(role)
@@ -19,14 +22,17 @@ defmodule AWSMetadata.Client do
   end
 
   defp fetch_role do
-    %HTTPoison.Response{status_code: 200, body: body} = HTTPoison.get!(@credential_url)
+    %HTTPoison.Response{status_code: 200, body: body} =
+      HTTPoison.get!(@credential_url)
     body
   end
 
   defp fetch_metadata(role) do
-    %HTTPoison.Response{status_code: 200, body: body} = HTTPoison.get!("#{@credential_url}#{role}")
+    %HTTPoison.Response{status_code: 200, body: body} =
+      HTTPoison.get!("#{@credential_url}#{role}")
     result = Poison.decode!(body)
-    %{access_key_id: result["AccessKeyId"],
+    %{
+      access_key_id: result["AccessKeyId"],
       secret_access_key: result["SecretAccessKey"],
       token: result["Token"],
       expiration: result["Expiration"]
@@ -34,7 +40,8 @@ defmodule AWSMetadata.Client do
   end
 
   defp fetch_document do
-    %HTTPoison.Response{status_code: 200, body: body} = HTTPoison.get!(@document_url)
-    Poison.decode!(body) |> Map.get("region")
+    %HTTPoison.Response{status_code: 200, body: body} =
+      HTTPoison.get!(@document_url)
+    body |> Poison.decode!() |> Map.get("region")
   end
 end
